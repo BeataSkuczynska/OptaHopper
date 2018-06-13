@@ -8,8 +8,6 @@ in_path = 'KorpusSzczerosci'
 
 go = False
 
-user = "axw@ipipan.waw.pl"
-lpmn = "any2txt|wcrft2|wsd"
 import json
 import os
 import time
