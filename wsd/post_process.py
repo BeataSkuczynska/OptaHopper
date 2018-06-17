@@ -9,14 +9,14 @@ utf8_html_parser = lxml.etree.HTMLParser(encoding='utf-8')
 rowlist = []
 
 filenr = 0
-qubagltmod = 0;
+qubagltmod = 0
 agltmod = 0
 
 for file in os.listdir(szcz_path):
     if file.endswith(".ccl"):
         print(file)
         e = xml.etree.ElementTree.parse(szcz_path + '/' + file, parser=utf8_html_parser).getroot()
-        orthtags = {};
+        orthtags = {}
         ix = 0
         for tokEl in e.findall(".//tok"):
             # surprisingly next 4 lines have to be exactly like this:
@@ -26,7 +26,7 @@ for file in os.listdir(szcz_path):
             baseEl = lexEl.find('base')
 
             propsList = list(tokEl.iter('prop'))
-            chosenSynset = None;
+            chosenSynset = None
             lcm_tag = None
             if len(propsList) > 0:
                 propEl = propsList[0]
@@ -44,7 +44,7 @@ for file in os.listdir(szcz_path):
             ix += 1
 
         # 2nd pass to remove aglt and qub->aglt
-        neworths = {};
+        neworths = {}
         ix = 0
         for ix, orthtag in orthtags.items():
             if ix > 0 and orthtag[1].find('aglt') >= 0:

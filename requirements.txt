@@ -1,0 +1,5 @@
+lxml
+pandas
+#multiservice-client
+jsonpickle
+thrift

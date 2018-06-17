@@ -4,9 +4,12 @@ from urllib.request import *
 import lxml.etree as ET
 
 out_path = 'out-szczerosci'
-in_path = 'KorpusSzczerosci'
+in_path = '/home/komputerka/PycharmProjects/OptaHopper/resources/KorpusSzczerosci'
 
 go = False
+
+user = "axw@ipipan.waw.pl"
+lpmn = "any2txt|wcrft2|wsd"
 
 import json
 import os
@@ -43,7 +46,8 @@ for file in os.listdir(in_path):
             print("skipping file")
             go = True
             continue
-        if not go: continue
+        if not go:
+            continue
         doc = ET.parse(os.path.join(in_path, file))
         orthtags = {}
 
@@ -85,7 +89,8 @@ for file in os.listdir(in_path):
         fileid = upload(txtfile)
         data = {'lpmn': lpmn, 'user': user, 'file': fileid.decode('utf-8')}
         data = process(data)
-        if data is None: continue
+        if data is None:
+            continue
         data = data[0]["fileID"]
         content = urlopen(Request(url + '/download' + data)).read()
         with open(os.path.join(out_path, file[:-8] + '.ccl'), "w") as outfile:

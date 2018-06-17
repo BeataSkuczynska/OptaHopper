@@ -27,8 +27,21 @@ cd ../..
 export PYTHONPATH=$(pwd)
 
 
+cd multiservice
+sudo python2.7 -m pip install setuptools==18.5.0
+sudo python2.7 -m pip install jsonpickle
+python2.7 -m pip install thrift
+sudo easy_install multiservice-0.1-py2.7.egg
+python2.7 thrift_client.py Concraft DependencyParser < input.txt > resources/output_concraft.json
+
+cd ..
+python multiservice_to_treehopper.py
+
+python wsd/raw_text.py
+
+python emo/ascribe_sentiment_to_token.py
 
 
 python prepare_conll_for_treehopper.py resources/opta_test.conll resources/
 python treehopper/treehopper/predict.py --model_path treehopper/model_1.pth --input_parents resources/parents.txt --input_sentences resources/sentences.txt --output resources/treehopper_sentiment.txt
-python add_treehopper_sentiment_to_conll.py resources/opta_test.conll resources/treehopper_sentiment.txt --output_path resources/
+python add_treehopper_sentiment_to_conll.py resources/to_crf.conll resources/treehopper_sentiment.txt --output_path resources/
