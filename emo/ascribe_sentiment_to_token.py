@@ -60,12 +60,16 @@ for file in os.listdir(wsd_output):
             for sentence in chunk:
                 sentiment_sentence = []
                 for token in sentence:
-                    for prop in token.iter('prop'):
-                        if prop.get('key') == "sense:ukb:syns_id":
-                            if prop.text in sentiment_dict:
-                                sentiment_sentence.append(sentiment_dict[prop.text])
-                            else:
-                                sentiment_sentence.append('0')
+                    if token.tag == "tok":
+                        has_synset_ascribed = False
+                        for prop in token.iter('prop'):
+                            if prop.get('key') == "sense:ukb:syns_id":
+                                if prop.text in sentiment_dict:
+                                    has_synset_ascribed = True
+                                    sentiment_sentence.append(sentiment_dict[prop.text])
+                                    break
+                        if not has_synset_ascribed:
+                            sentiment_sentence.append('0')
                 sentiment_output.append(sentiment_sentence)
         with open(os.path.join(wsd_output, file[:-4] + "_sent"), 'w') as fo:
             for sentence in sentiment_output:
