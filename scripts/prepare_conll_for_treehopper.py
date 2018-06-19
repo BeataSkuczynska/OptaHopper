@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from utils import get_conll
+from scripts.utils import get_conll
 
 
 def save_treehopper_input_files(conll, output_path):

@@ -1,47 +1,68 @@
 #!/usr/bin/env bash
+#example input
+###PARAMETERS
+DIR=$1
+WITH_TRAIN=$2 #train or model path
+LPMN=$3
+USER=$4
+FILENAME=$5
 
+INPUT=${DIR}/${FILENAME}
+# GET Sentences from conll format
+mkdir resources/predict
+
+if [ ${INPUT} == *conll ]; then
+    python3 scripts/prepare_conll_for_treehopper.py ${INPUT} resources/predict
+    INPUT=resources/predict/sentences.txt
+fi
+
+#download treehopper
 if [ ! -d trehopper ]; then
     echo " Downloading trehopper repository"
     git clone https://github.com/Zuchens/treehopper
 fi
 
-cd treehopper
-WITH_TRAIN=$1
-SENTIMENT_DICTIONARY=SlownikWydzwieku01.csv
-
-./fetch_data.sh
-pip3 install -r requirements.txt
-cd treehopper
-export PYTHONPATH=$(pwd)
-
-if [ ${WITH_TRAIN} == 'train']; then
-    train.py --dictionaries ${SENTIMENT_DICTIONARY}
-fi
-
-python predict.py --model_path model.pth \
-               --input_parents test/polevaltest_parents.txt \
-               --input_sentences test/polevaltest_sentence.txt \
-               --output ../../resources/treehopper_sentiment.txt
-
-cd ../..
-export PYTHONPATH=$(pwd)
-
-
+#get multiservice
 cd multiservice
-sudo python2.7 -m pip install setuptools==18.5.0
+export PYTHONPATH=.
+sudo python2.7 -m pip install setuptools\=\=18.5.0
 sudo python2.7 -m pip install jsonpickle
-python2.7 -m pip install thrift
-sudo easy_install multiservice-0.1-py2.7.egg
-python2.7 thrift_client.py Concraft DependencyParser < input.txt > resources/output_concraft.json
-
+sudo python2.7 -m pip install thrift
+sudo easy_install-2.7 multiservice-0.1-py2.7.egg
+python2.7 thrift_client.py Concraft DependencyParser < ${INPUT} > ../resources/output_concraft.json
 cd ..
-python multiservice_to_treehopper.py
 
-python wsd/raw_text.py
+#Multiservice to trehopper
+export PYTHONPATH=$(pwd)
+python3 scripts/multiservice_to_treehopper.py --input resources/output_concraft.json --output resources/predict
 
-python emo/ascribe_sentiment_to_token.py
+
+#get wsd sentiments
+mkdir resources/wsd_output
+python3 wsd/raw_text.py --lpmn $LPMN --user $USER --out_path resources/wsd_output/input.ccl  --in_path ${DIR}
+python3 emo/ascribe_sentiment_to_token.py --wsd_output resources/wsd_output --wordnet resources/plwordnet-3.0.xml --out resources/predict
 
 
-python prepare_conll_for_treehopper.py resources/opta_test.conll resources/
-python treehopper/treehopper/predict.py --model_path treehopper/model_1.pth --input_parents resources/parents.txt --input_sentences resources/sentences.txt --output resources/treehopper_sentiment.txt
-python add_treehopper_sentiment_to_conll.py resources/to_crf.conll resources/treehopper_sentiment.txt --output_path resources/
+# get TreeLSTMSentiments
+SENTIMENT_DICTIONARY=$(pwd)/resources/slownikWydzwieku01.csv
+cd treehopper
+./fetch_data.sh
+sudo pip3 install -r requirements.txt
+export PYTHONPATH=.
+
+#TRAIN
+if [ ${MODEL_PATH} = "train" ]; then
+    python treehopper/train.py --dictionaries ${SENTIMENT_DICTIONARY}
+    MODEL_PATH=models/saved_model/models/model.pth
+fi
+#PREDICT SENTIMENTS
+MODEL_PATH=models/saved_model/models/model.pth
+python treehopper/predict.py --model_path ${MODEL_PATH} \
+               --input_parents ../resources/predict/parents.txt \
+               --input_sentences ../resources/predict/sentences.txt \
+               --input_wordnet ../resources/predict/input_wordnet.txt \
+               --output ../resources/treehopper_sentiment.txt
+cd ..
+
+##python add_treehopper_sentiment_to_conll.py resources/to_crf.conll resources/treehopper_sentiment.txt --output_path resources/
+#

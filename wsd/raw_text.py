@@ -1,13 +1,7 @@
 import codecs, os, re
 from urllib.request import *
-
-
-out_path = '/home/komputerka/PycharmProjects/OptaHopper/resources/output'
-in_path = '/home/komputerka/PycharmProjects/OptaHopper/resources/input'
-
 go = False
-
-
+import argparse
 import json
 import os
 import time
@@ -23,9 +17,11 @@ def upload(file):
 
 def process(data):
     doc = json.dumps(data).encode("utf-8")
+    print(doc)
     taskid = urlopen(Request(url + '/startTask/', doc, {'Content-Type': 'application/json'})).read()
     time.sleep(0.2)
     resp = urlopen(Request(url + '/getStatus/' + taskid.decode('utf-8'))).read().decode("utf-8")
+    print(resp)
     data = json.loads(resp)
     while data["status"] == "QUEUE" or data["status"] == "PROCESSING":
         time.sleep(0.5)
@@ -36,23 +32,32 @@ def process(data):
         return None
     return data["value"]
 
+def main(args):
+    for file in os.listdir(args.in_path):
+        txtfile = os.path.join(args.in_path, file)
+        with codecs.open(txtfile, 'r', 'utf8') as fw:
+            text = fw.read()
+        print("Processing: " + txtfile)
+        fileid = upload(txtfile)
+        data = {'lpmn': args.lpmn, 'user': args.user, 'file': fileid.decode('utf-8')}
+        data = process(data)
+        if data is None:
+            continue
+        data = data[0]["fileID"]
+        content = urlopen(Request(url + '/download' + data)).read()
+        with open(args.out_path, "w") as outfile:
+            outfile.write(content.decode('utf-8'))
 
-for file in os.listdir(in_path):
-    txtfile = os.path.join(in_path, file)
-    with codecs.open(txtfile, 'r', 'utf8') as fw:
-        text = fw.read()
+        print("Processed fileid: " + str(fileid))
 
-    print("Processing: " + txtfile)
-    fileid = upload(txtfile)
-    data = {'lpmn': lpmn, 'user': user, 'file': fileid.decode('utf-8')}
-    data = process(data)
-    if data is None:
-        continue
-    data = data[0]["fileID"]
-    content = urlopen(Request(url + '/download' + data)).read()
-    with open(os.path.join(out_path, file[:-4] + '.ccl'), "w") as outfile:
-        outfile.write(content.decode('utf-8'))
 
-    print("Processed fileid: " + str(fileid))
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='PyTorch TreeLSTM for Sentiment Analysis Trees')
+    parser.add_argument('--lpmn')
+    parser.add_argument('--user')
+    parser.add_argument('--out_path')
+    parser.add_argument('--in_path')
 
+    args = parser.parse_args()
+    main(args)
 

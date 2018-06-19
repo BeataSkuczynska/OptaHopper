@@ -2,7 +2,7 @@ import argparse
 import os
 from itertools import zip_longest
 
-from utils import get_conll
+from scripts.utils import get_conll
 
 
 def add_sentiment_to_conll(conll, sentiments, output_path):
