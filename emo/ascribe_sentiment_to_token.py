@@ -52,7 +52,7 @@ def main(args):
     for file in os.listdir(args.wsd_output):
         if file.endswith(".ccl"):
             sentiment_output = []
-            doc = ET.parse(os.path.join(wsd_output, file))
+            doc = ET.parse(os.path.join(args.wsd_output, file))
             root = doc.getroot()
             for chunk in tqdm(root):
                 for sentence in chunk:
