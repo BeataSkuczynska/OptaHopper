@@ -1,10 +1,8 @@
-import codecs, os, re
-from urllib.request import *
-go = False
 import argparse
 import json
 import os
 import time
+from urllib.request import *
 
 url = "http://ws.clarin-pl.eu/nlprest2/base"
 
@@ -32,11 +30,10 @@ def process(data):
         return None
     return data["value"]
 
+
 def main(args):
     for file in os.listdir(args.in_path):
         txtfile = os.path.join(args.in_path, file)
-        with codecs.open(txtfile, 'r', 'utf8') as fw:
-            text = fw.read()
         print("Processing: " + txtfile)
         fileid = upload(txtfile)
         data = {'lpmn': args.lpmn, 'user': args.user, 'file': fileid.decode('utf-8')}
@@ -45,7 +42,9 @@ def main(args):
             continue
         data = data[0]["fileID"]
         content = urlopen(Request(url + '/download' + data)).read()
-        with open(args.out_path, "w") as outfile:
+
+        out_filename = file[:-4] + '.ccl'
+        with open(os.path.join(args.out_path, out_filename), "w") as outfile:
             outfile.write(content.decode('utf-8'))
 
         print("Processed fileid: " + str(fileid))

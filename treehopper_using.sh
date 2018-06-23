@@ -41,7 +41,7 @@ fi
 #get wsd sentiments
 mkdir resources/wsd_output
 python3 wsd/raw_text.py --lpmn $LPMN --user $USER --out_path resources/wsd_output/input.ccl  --in_path ${DIR}
-python3 emo/ascribe_sentiment_to_token.py --wsd_output resources/wsd_output --wordnet resources/plwordnet-3.0.xml --out resources/predict
+python3 emo/ascribe_sentiment_to_token.py --raw_text ${DIR} --wsd_output resources/wsd_output --wordnet resources/plwordnet-3.0.xml --out resources/predict
 
 
 # get TreeLSTMSentiments
