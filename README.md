@@ -1,20 +1,21 @@
-Running:
-./prepare_data DIR FILENAME MODEL_PATH LPMN USER 
-for example
-./prepare_data "sample" "input.txt" "train" LPMN USER 
+```
+Running:  
+./prepare_data DIR FILENAME MODEL_PATH LPMN USER   
+for example  
+./prepare_data "sample" "input.txt" "train" LPMN USER   
 DIR= directory to a text file
 FILENAME=text file
 MODEL_PATH="train" or TreeLSTM model path
 LPMN=lpmn for WSD client
 USER=user for WSD client
+```
 
-
-###Download OPFI
+### Download OPFI
 - Opinion Finder - a hybrid (CRF+patterns) application for extracting opinion targets in Polish:
 http://zil.ipipan.waw.pl/OPTA
 
 
-####Download Sentiment dictionary:
+#### Download Sentiment dictionary:
 http://zil.ipipan.waw.pl/SlownikWydzwieku
 by default the path is resources/slownikWydzwieku01.csv
 
@@ -24,9 +25,9 @@ pip install http://download.pytorch.org/whl/cu80/torch-0.1.12.post2-cp35-cp35m-l
 
 ### Download Wordnet
 http://nlp.pwr.wroc.pl/plwordnet/download/?lang=pl
-Default path : resources/plwordnet-3.0.xml
+Default path : resources/plwordnet-3.0.xml  
 
-If something goes wrong check if you have the same directory structure as below
+If something goes wrong check if you have the same directory structure as below  
 ```
 OptaHopper
 ├── emo
