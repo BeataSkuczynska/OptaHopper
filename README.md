@@ -34,8 +34,6 @@ Take a version 3.0 or higher - otherwise it won't be compatible with WSD.
 If something goes wrong check if you have the same directory structure as below  
 ```
 OptaHopper
-├── emo
-│   └── ascribe_sentiment_to_token.py
 ├── multiservice
 │   ├── multiservice-0.1-py2.7.egg
 │   └── thrift_client.py
@@ -146,6 +144,7 @@ OptaHopper
 │   │   ├── tmp
 │   │   └── train.py
 │   └── wiki.pl.zip
-└── wsd
+└── wsd_emo
+    ├── ascribe_sentiment_to_token.py
     └── raw_text.py
    ```

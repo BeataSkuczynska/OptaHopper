@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#example input
 ###PARAMETERS
 INPUT=$1
 MODEL_PATH=$2 #train or model path
@@ -34,9 +33,9 @@ export PYTHONPATH=$(pwd)
 python scripts/multiservice_to_treehopper.py --input resources/output_concraft.json --output resources/predict
 
 
-echo "get wsd sentiments"
-python wsd/raw_text.py --lpmn $LPMN --user $USER --out_path resources/wsd_output.txt  --in_path ${INPUT}
-python emo/ascribe_sentiment_to_token.py --raw_text resources/predict/sentences.txt --wsd_output resources/wsd_output.txt --wordnet resources/plwordnet-3.0.xml --out resources/predict
+echo "get wsd_emo sentiments"
+python wsd_emo/raw_text.py --lpmn $LPMN --user $USER --out_path resources/wsd_output.txt  --in_path ${INPUT}
+python wsd_emo/ascribe_sentiment_to_token.py --raw_text resources/predict/sentences.txt --wsd_output resources/wsd_output.txt --wordnet resources/plwordnet-3.0.xml --out resources/predict
 
 
 echo "get TreeLSTM Sentiments"
