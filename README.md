@@ -1,18 +1,21 @@
 ```
 Running:  
-./prepare_data DIR FILENAME MODEL_PATH LPMN USER   
+./prepare_data INPUT MODEL_PATH LPMN USER   
 for example  
-./prepare_data "sample" "input.txt" "train" LPMN USER   
-DIR= directory to a text file
-FILENAME=text file
+./prepare_data "sample/input.txt" "train" LPMN USER   
+INPUT=path to text file
 MODEL_PATH="train" or TreeLSTM model path
 LPMN=lpmn for WSD client
 USER=user for WSD client
 ```
 
-### Download OPFI
+### Download OPFI & CRFSuite
 - Opinion Finder - a hybrid (CRF+patterns) application for extracting opinion targets in Polish:
 http://zil.ipipan.waw.pl/OPTA
+by default the path is ./
+- CRFSuite for Linux_64bit_binary
+http://www.chokkan.org/software/crfsuite/
+by default the path is opta-tagger/
 
 
 #### Download Sentiment dictionary:
@@ -25,7 +28,8 @@ pip install http://download.pytorch.org/whl/cu80/torch-0.1.12.post2-cp35-cp35m-l
 
 ### Download Wordnet
 http://nlp.pwr.wroc.pl/plwordnet/download/?lang=pl
-Default path : resources/plwordnet-3.0.xml  
+Default path : resources/plwordnet-3.0.xml
+Take a version 3.0 or higher - otherwise it won't be compatible with WSD.
 
 If something goes wrong check if you have the same directory structure as below  
 ```
@@ -35,7 +39,37 @@ OptaHopper
 ├── multiservice
 │   ├── multiservice-0.1-py2.7.egg
 │   └── thrift_client.py
+├── opta-tagger
+│   ├── add_sentiment.py
+│   ├── crf-suite-0.12
+│   │   ├── bin
+│   │   ├── include
+│   │   ├── lib
+│   │   └── share
+│   ├── crffeaturebuilder.py
+│   ├── crfutils.py
+│   ├── input_data
+│   │   ├── conll-format
+│   │   └── crf-format
+│   ├── INSTALL
+│   ├── models
+│   ├── opta-patterns.py
+│   ├── README
+│   ├── resources
+│   │   ├── pathsByIdWithMetadata.pkl
+│   │   └── slownikWydzwieku01.csv
+│   ├── runme.sh
+│   ├── sentence.py
+│   ├── SentencePatternMatcher.py
+│   ├── train_data
+│   ├── train_model.sh
+│   │   ├── conll-format
+│   │   │   └── train.conll
+│   │   └── crf-format
+│   │       └── train.crfsuite.txt
+│   └── thrift_client.py
 ├── README.md
+├── prepare_data.sh
 ├── requirements.txt
 ├── resources
 │   ├── plwordnet-3.0.xml
@@ -44,6 +78,7 @@ OptaHopper
 │   └── input.txt
 ├── scripts
 │   ├── add_treehopper_sentiment_to_conll.py
+│   ├── __init__.py
 │   ├── multiservice_to_treehopper.py
 │   ├── prepare_conll_for_treehopper.py
 │   └── utils.py
@@ -58,7 +93,7 @@ OptaHopper
 │   │           └── model.pth
 │   ├── README.md
 │   ├── requirements.txt
-│   ├── resources
+│   ├── data
 │   │   └── pol
 │   │       └── fasttext
 │   │           ├── wiki.pl.bin
@@ -111,7 +146,6 @@ OptaHopper
 │   │   ├── tmp
 │   │   └── train.py
 │   └── wiki.pl.zip
-├── treehopper_using.sh
 └── wsd
     └── raw_text.py
    ```

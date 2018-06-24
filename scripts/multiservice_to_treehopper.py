@@ -49,7 +49,8 @@ def parse(args):
                     conll_t.insert(2, interp['base'])
                     conll_t.insert(3, interp['ctag'])
                     conll_t.insert(4, interp['ctag'])
-                    conll_t.insert(5, interp['msd'])
+                    msd = interp['msd'] if interp['msd'] else "_"
+                    conll_t.insert(5, msd)
                     conll_t.extend(["_"] * 3)
                 sents.write(" ".join(sent) + "\n")
                 for conll_t in conll_s:

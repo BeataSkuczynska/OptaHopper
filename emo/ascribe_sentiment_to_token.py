@@ -99,17 +99,17 @@ def get_sentiment_for_tokens(sentence, emo_sentiment_dict, raw_text, previous_ra
     return sentiment_sentence, raw_text, previous_raw_token
 
 
-def save_ascribed_sentiment(path, filename, sentiment_output, sentences_sizes):
-    with open(os.path.join(path, filename[:-4] + "_wordnet.txt"), 'w') as fo:
+def save_ascribed_sentiment(path, sentiment_output, sentences_sizes):
+    with open(os.path.join(path, "sentiment_wordnet.txt"), 'w') as fo:
         for sentence_size in sentences_sizes:
             fo.write(" ".join(sentiment_output[:sentence_size]) + "\n")
             sentiment_output = sentiment_output[sentence_size:]
 
 
-def load_raw(raw_text_directory, filename):
+def load_raw(raw_text_filename):
     raw_text = []
     sentences_sizes = []
-    with open(os.path.join(raw_text_directory, filename + ".txt"), "r") as raw:
+    with open(raw_text_filename, "r") as raw:
         lines = raw.readlines()
         for line in lines:
             line_s = line.strip().split(" ")
@@ -120,20 +120,18 @@ def load_raw(raw_text_directory, filename):
 
 def main(args):
     emo_sentiment_dict = get_sentiment_dict(args)
-    for file in os.listdir(args.wsd_output):
-        if file.endswith(".ccl"):
-            raw_text, sentences_sizes = load_raw(args.raw_text, file[:-4])
-            sentiment_output = []
-            previous_raw_token = ""
-            doc = ET.parse(os.path.join(args.wsd_output, file))
-            root = doc.getroot()
-            for chunk in tqdm(root):
-                for sentence in chunk:
-                    if sentence.tag == "sentence":
-                        sentiment_sentence, raw_text, previous_raw_token = \
-                            get_sentiment_for_tokens(sentence, emo_sentiment_dict, raw_text, previous_raw_token)
-                        sentiment_output.extend(sentiment_sentence)
-            save_ascribed_sentiment(args.output, file, sentiment_output, sentences_sizes)
+    raw_text, sentences_sizes = load_raw(args.raw_text)
+    sentiment_output = []
+    previous_raw_token = ""
+    doc = ET.parse(args.wsd_output)
+    root = doc.getroot()
+    for chunk in tqdm(root):
+        for sentence in chunk:
+            if sentence.tag == "sentence":
+                sentiment_sentence, raw_text, previous_raw_token = \
+                    get_sentiment_for_tokens(sentence, emo_sentiment_dict, raw_text, previous_raw_token)
+                sentiment_output.extend(sentiment_sentence)
+    save_ascribed_sentiment(args.output, sentiment_output, sentences_sizes)
 
 
 if __name__ == '__main__':

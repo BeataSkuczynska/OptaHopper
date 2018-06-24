@@ -11,14 +11,14 @@ def add_sentiment_to_conll(conll, sentiments, output_path):
         for c_sentence, s_sentence in zip(conll, sentiments):
             for token, sentiment in zip_longest(c_sentence, s_sentence):
                 try:
-                    token_splitted = token.strip().split(" ")[:8]
+                    token_splitted = token.strip().split("\t")[:8]
                 except AttributeError:
                     print(token)
                 if sentiment in ["-1",  "1"]:
                     token_splitted.extend("_"*3 + "S")
                 else:
                     token_splitted.extend("_" * 4)
-                output.write(" ".join(token_splitted) + "\n")
+                output.write("\t".join(token_splitted) + "\n")
             output.write("\n")
 
 

@@ -32,22 +32,17 @@ def process(data):
 
 
 def main(args):
-    for file in os.listdir(args.in_path):
-        txtfile = os.path.join(args.in_path, file)
-        print("Processing: " + txtfile)
-        fileid = upload(txtfile)
-        data = {'lpmn': args.lpmn, 'user': args.user, 'file': fileid.decode('utf-8')}
-        data = process(data)
-        if data is None:
-            continue
-        data = data[0]["fileID"]
-        content = urlopen(Request(url + '/download' + data)).read()
+    print("Processing: " + args.in_path)
+    fileid = upload(args.in_path)
+    data = {'lpmn': args.lpmn, 'user': args.user, 'file': fileid.decode('utf-8')}
+    data = process(data)
+    data = data[0]["fileID"]
+    content = urlopen(Request(url + '/download' + data)).read()
 
-        out_filename = file[:-4] + '.ccl'
-        with open(os.path.join(args.out_path, out_filename), "w") as outfile:
-            outfile.write(content.decode('utf-8'))
+    with open(os.path.join(args.out_path), "w") as outfile:
+        outfile.write(content.decode('utf-8'))
 
-        print("Processed fileid: " + str(fileid))
+    print("Processed fileid: " + str(fileid))
 
 
 if __name__ == '__main__':

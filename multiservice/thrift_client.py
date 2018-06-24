@@ -5,6 +5,7 @@
 # It is available on the same license as the Multiservice itself.
 #
 
+import codecs
 import sys
 import re
 import jsonpickle
@@ -19,7 +20,10 @@ from multiservice.facade import Multiservice
 from multiservice.facade.ttypes import *
 from multiservice.types.ttypes import *
 
-    
+
+UTF8Reader = codecs.getreader('utf8')
+sys.stdin = UTF8Reader(sys.stdin)
+
 def createSampleRequest(text, serviceNames):
     ttext=TText(paragraphs=[TParagraph(text=chunk) 
                             for chunk in re.split(r'\n\n+', text)])
