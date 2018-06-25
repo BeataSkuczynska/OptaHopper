@@ -8,8 +8,8 @@ USER=$4
 
 sudo python3 -m pip install -r requirements.txt
 
-if [ ! -d resources ]; then
-    mkdir resources resources/predict
+if [ ! -d resources/predict ]; then
+    mkdir resources/predict
 fi
 
 
